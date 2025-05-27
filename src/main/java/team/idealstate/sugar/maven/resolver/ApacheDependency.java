@@ -1,7 +1,7 @@
 package team.idealstate.sugar.maven.resolver;
 
-import team.idealstate.sugar.maven.resolve.api.Dependency;
-import team.idealstate.sugar.maven.resolve.api.DependencyScope;
+import team.idealstate.sugar.maven.resolver.api.Dependency;
+import team.idealstate.sugar.maven.resolver.api.DependencyScope;
 import team.idealstate.sugar.validate.Validation;
 import team.idealstate.sugar.validate.annotation.NotNull;
 

@@ -3,7 +3,7 @@ package team.idealstate.sugar.maven.resolver;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
-import team.idealstate.sugar.maven.resolve.api.ResolvedArtifact;
+import team.idealstate.sugar.maven.resolver.api.ResolvedArtifact;
 import team.idealstate.sugar.validate.Validation;
 import team.idealstate.sugar.validate.annotation.NotNull;
 

@@ -2,10 +2,10 @@ package team.idealstate.sugar.maven.resolver;
 
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import team.idealstate.sugar.maven.resolve.api.Dependency;
-import team.idealstate.sugar.maven.resolve.api.DependencyResolver;
-import team.idealstate.sugar.maven.resolve.api.DependencyScope;
-import team.idealstate.sugar.maven.resolve.api.exception.MavenResolutionException;
+import team.idealstate.sugar.maven.resolver.api.Dependency;
+import team.idealstate.sugar.maven.resolver.api.DependencyResolver;
+import team.idealstate.sugar.maven.resolver.api.DependencyScope;
+import team.idealstate.sugar.maven.resolver.api.exception.MavenResolutionException;
 import team.idealstate.sugar.validate.Validation;
 import team.idealstate.sugar.validate.annotation.NotNull;
 import team.idealstate.sugar.validate.annotation.Nullable;
