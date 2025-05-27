@@ -1,5 +1,29 @@
+/*
+ *    Copyright 2025 ideal-state
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package team.idealstate.sugar.maven.resolver;
 
+import java.io.Closeable;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -27,15 +51,6 @@ import team.idealstate.sugar.maven.resolver.api.exception.MavenResolutionExcepti
 import team.idealstate.sugar.validate.Validation;
 import team.idealstate.sugar.validate.annotation.NotNull;
 
-import java.io.Closeable;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 final class ApacheMavenResolver implements MavenResolver, Closeable {
 
     private static final Set<DependencyScope> DEFAULT_RESOLVING_SCOPES =
@@ -48,7 +63,10 @@ final class ApacheMavenResolver implements MavenResolver, Closeable {
     private final List<org.eclipse.aether.repository.RemoteRepository> apacheRemoteRepositories;
     private final RepositorySystem system = new RepositorySystemSupplier().get();
 
-    public ApacheMavenResolver(@NotNull LocalRepository localRepository, @NotNull List<RemoteRepository> remoteRepositories, @NotNull DependencyResolver dependencyResolver) {
+    public ApacheMavenResolver(
+            @NotNull LocalRepository localRepository,
+            @NotNull List<RemoteRepository> remoteRepositories,
+            @NotNull DependencyResolver dependencyResolver) {
         Validation.notNull(localRepository, "Local repository must not be null.");
         Validation.notNull(remoteRepositories, "Remote repositories must not be null.");
         Validation.notNull(dependencyResolver, "Dependency resolver must not be null.");
@@ -76,8 +94,8 @@ final class ApacheMavenResolver implements MavenResolver, Closeable {
             Artifact response = artifactResult.getArtifact();
             if (response == null) {
                 throw new MavenResolutionException(String.format(
-                        "Failed to resolution dependency '%s'.", artifactResult.getRequest().getArtifact()
-                ));
+                        "Failed to resolution dependency '%s'.",
+                        artifactResult.getRequest().getArtifact()));
             }
             result.add(new ApacheResolvedArtifact(response));
         }
@@ -85,7 +103,8 @@ final class ApacheMavenResolver implements MavenResolver, Closeable {
     }
 
     @NotNull
-    private static List<org.eclipse.aether.graph.Dependency> asApacheDependencies(@NotNull List<Dependency> dependencies, @NotNull Set<DependencyScope> dependencyScopes) {
+    private static List<org.eclipse.aether.graph.Dependency> asApacheDependencies(
+            @NotNull List<Dependency> dependencies, @NotNull Set<DependencyScope> dependencyScopes) {
         if (dependencies.isEmpty()) {
             return Collections.emptyList();
         }
@@ -101,28 +120,37 @@ final class ApacheMavenResolver implements MavenResolver, Closeable {
                             dependency.getArtifactId(),
                             dependency.getClassifier(),
                             dependency.getExtension(),
-                            dependency.getVersion()
-                    ), scope.getActualName()));
+                            dependency.getVersion()),
+                    scope.getActualName()));
         }
         return result;
     }
 
     @NotNull
-    private static List<org.eclipse.aether.repository.RemoteRepository> asApacheRemoteRepositories(@NotNull List<RemoteRepository> repositories) throws MalformedURLException {
+    private static List<org.eclipse.aether.repository.RemoteRepository> asApacheRemoteRepositories(
+            @NotNull List<RemoteRepository> repositories) throws MalformedURLException {
         if (repositories.isEmpty()) {
             return Collections.emptyList();
         }
         List<org.eclipse.aether.repository.RemoteRepository> result = new ArrayList<>(repositories.size());
         for (RemoteRepository repository : repositories) {
             Set<RepositoryPolicy> policies = repository.getPolicies();
-            result.add(
-                    new org.eclipse.aether.repository.RemoteRepository.Builder(repository.getName(), "default", repository.getUrl().toURL().toString())
-                            .setReleasePolicy(new org.eclipse.aether.repository.RepositoryPolicy(
-                                    true, org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER, org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN))
-                            .setSnapshotPolicy(new org.eclipse.aether.repository.RepositoryPolicy(
-                                    true, policies.contains(RepositoryPolicy.ALWAYS_UPDATE) && !policies.contains(RepositoryPolicy.NEVER_UPDATE) ? org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS : org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER, org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN))
-                            .build()
-            );
+            result.add(new org.eclipse.aether.repository.RemoteRepository.Builder(
+                            repository.getName(),
+                            "default",
+                            repository.getUrl().toURL().toString())
+                    .setReleasePolicy(new org.eclipse.aether.repository.RepositoryPolicy(
+                            true,
+                            org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER,
+                            org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN))
+                    .setSnapshotPolicy(new org.eclipse.aether.repository.RepositoryPolicy(
+                            true,
+                            policies.contains(RepositoryPolicy.ALWAYS_UPDATE)
+                                            && !policies.contains(RepositoryPolicy.NEVER_UPDATE)
+                                    ? org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS
+                                    : org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER,
+                            org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_WARN))
+                    .build());
         }
         return result;
     }
@@ -147,26 +175,36 @@ final class ApacheMavenResolver implements MavenResolver, Closeable {
 
     @NotNull
     @Override
-    public List<ResolvedArtifact> resolve(@NotNull List<Dependency> dependencies, @NotNull DependencyScope... dependencyScopes) throws MavenResolutionException {
+    public List<ResolvedArtifact> resolve(
+            @NotNull List<Dependency> dependencies, @NotNull DependencyScope... dependencyScopes)
+            throws MavenResolutionException {
         Validation.notNull(dependencies, "Dependencies must not be null.");
         Validation.notNull(dependencyScopes, "Dependency scopes must not be null.");
-        List<org.eclipse.aether.graph.Dependency> apacheDependencies = asApacheDependencies(dependencies, dependencyScopes.length == 0 ? DEFAULT_RESOLVING_SCOPES : new HashSet<>(Arrays.asList(dependencyScopes)));
+        List<org.eclipse.aether.graph.Dependency> apacheDependencies = asApacheDependencies(
+                dependencies,
+                dependencyScopes.length == 0
+                        ? DEFAULT_RESOLVING_SCOPES
+                        : new HashSet<>(Arrays.asList(dependencyScopes)));
         if (apacheDependencies.isEmpty()) {
             return Collections.emptyList();
         }
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        session.setLocalRepositoryManager(
-                system.newLocalRepositoryManager(session, apacheLocalRepository));
+        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, apacheLocalRepository));
         session.setTransferListener(new TransferLog());
         session.setReadOnly();
-        List<org.eclipse.aether.repository.RemoteRepository> apacheRemoteRepositories = system.newResolutionRepositories(
-                session, this.apacheRemoteRepositories);
+        List<org.eclipse.aether.repository.RemoteRepository> apacheRemoteRepositories =
+                system.newResolutionRepositories(session, this.apacheRemoteRepositories);
 
         DependencyResult dependencyResult;
         try {
             dependencyResult = system.resolveDependencies(
                     session,
-                    new DependencyRequest(new CollectRequest((org.eclipse.aether.graph.Dependency) null, apacheDependencies, apacheRemoteRepositories), null));
+                    new DependencyRequest(
+                            new CollectRequest(
+                                    (org.eclipse.aether.graph.Dependency) null,
+                                    apacheDependencies,
+                                    apacheRemoteRepositories),
+                            null));
         } catch (DependencyResolutionException e) {
             throw new MavenResolutionException(e);
         }
@@ -175,9 +213,7 @@ final class ApacheMavenResolver implements MavenResolver, Closeable {
 
     @NotNull
     private org.eclipse.aether.repository.LocalRepository asApacheLocalRepository(@NotNull LocalRepository repository) {
-        return new org.eclipse.aether.repository.LocalRepository(
-                repository.getLocation()
-        );
+        return new org.eclipse.aether.repository.LocalRepository(repository.getLocation());
     }
 
     @Override
