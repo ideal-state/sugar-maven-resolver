@@ -1,0 +1,15 @@
+[versions]
+jreleaser = "1.18.0"
+lombok = "1.18.38"
+sugar = "0.1.0-SNAPSHOT"
+maven-resolver = "1.9.22"
+slf4j-simple = "2.0.17"
+
+[plugins]
+jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
+
+[libraries]
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+sugar = { group = "team.idealstate.sugar", name = "sugar", version.ref = "sugar" }
+maven-resolver-supplier = { group = "org.apache.maven.resolver", name = "maven-resolver-supplier", version.ref = "maven-resolver" }
+slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j-simple" }
