@@ -62,7 +62,7 @@ final class ApacheDependencyResolver implements DependencyResolver {
                     .map(it -> resolve(
                             it.getGroupId(),
                             it.getArtifactId(),
-                            null,
+                            it.getType(),
                             it.getClassifier(),
                             it.getVersion(),
                             DependencyScope.of(it.getScope())))
