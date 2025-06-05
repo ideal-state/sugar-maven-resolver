@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "team.idealstate.sugar"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.0"
 
 java {
     toolchain {
@@ -45,7 +45,7 @@ repositories {
 dependencies {
     compileOnly(java(project, "tools"))
 
-    compileOnly(libs.sugar)
+    implementation(libs.sugar)
     internal(libs.slf4j.simple)
     internal(libs.maven.resolver.supplier)
 }
@@ -53,6 +53,32 @@ dependencies {
 publishing {
     repositories {
         project(project)
+    }
+    publications {
+        main {
+            pom {
+                description.set("Coffee(Java) with sugar is sweeter.")
+                url.set("https://github.com/ideal-state/sugar-maven-resolver")
+                licenses {
+                    license {
+                        name.set("Apache License 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/ideal-state/sugar-maven-resolver")
+                    connection.set("scm:git:https://github.com/ideal-state/sugar-maven-resolver.git")
+                    developerConnection.set("scm:git:https://github.com/ideal-state/sugar-maven-resolver.git")
+                }
+                developers {
+                    developer {
+                        id.set("ideal-state")
+                        name.set("ideal-state")
+                        email.set("support@idealstate.team")
+                    }
+                }
+            }
+        }
     }
 }
 
